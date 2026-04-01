@@ -1,0 +1,75 @@
+[
+  {
+    "question": "What is data integrity in GMP?",
+    "type": "answerable"
+  },
+  {
+    "question": "How should out-of-specification results be handled?",
+    "type": "answerable"
+  },
+  {
+    "question": "What is the purpose of process validation?",
+    "type": "answerable"
+  },
+  {
+    "question": "What are requirements for electronic signatures?",
+    "type": "answerable"
+  },
+  {
+    "question": "What is CAPA in pharma?",
+    "type": "answerable"
+  },
+  {
+    "question": "What steps should be taken after detecting a data integrity issue?",
+    "type": "answerable"
+  },
+
+  {
+    "question": "How do CAPA and deviation handling relate to each other?",
+    "type": "answerable"
+  }
+  ,
+  {
+    "question": "What is ALCOA and how is it used in data integrity?",
+    "type": "answerable"
+  }
+  ,
+  {
+    "question": "What is required before a manufacturing process is approved?",
+    "type": "answerable"
+  }
+  ,
+  {
+    "question": "How does process validation contribute to product quality and compliance?",
+    "type": "answerable"
+  }
+  ,
+  {
+    "question": "What risks arise from poor documentation practices?",
+    "type": "answerable"
+  },
+  {
+    "question": "How does GMP ensure product quality?",
+    "type": "answerable"
+  },
+  {
+    "question": "What is the relationship between validation and compliance?",
+    "type": "answerable"
+  },
+  {
+    "question": "Who approves SOP changes internally?",
+    "type": "unanswerable"
+  },
+  {
+    "question": "What is the company’s internal deviation policy?",
+    "type": "unanswerable"
+  },
+  {
+    "question": "What tools are used internally for compliance tracking?",
+    "type": "unanswerable"
+  },
+  {
+    "question": "Who should I reach out to with questions about the Automation SOP?",
+    "type": "unanswerable"
+  }
+]
