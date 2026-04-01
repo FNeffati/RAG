@@ -5,6 +5,7 @@ from pathlib import Path
 
 
 inputs = Path("data/raw")
+MAX_CHARS = 1000
 
 # Parse
 def ingest_pdf_text(pdf_path):
@@ -32,16 +33,16 @@ def ingest_pdf_text(pdf_path):
     return pages
 
 
-extracted_corpus = []
-for pdf_path in inputs.rglob('*.pdf'):
-    if pdf_path:
-        extracted_corpus.append({
-    "source": pdf_path.name,
-    "text": ingest_pdf_text(pdf_path)
-})
+def extract():
+    extracted_corpus = []
+    for pdf_path in inputs.rglob('*.pdf'):
+        if pdf_path:
+            extracted_corpus.append({
+        "source": pdf_path.name,
+        "pages": ingest_pdf_text(pdf_path)
+    })
+    return extracted_corpus
 
-
-print(len(extracted_corpus))
 
 # Chunk
 """
@@ -83,21 +84,32 @@ print(len(extracted_corpus))
         - No merging, overlap, or size control is applied.
 """
 
-paragraphs = {}
-for file in extracted_corpus:
-    current = []
-    for f in file["text"]:
-        text = f["text"]
-        page = f["page"]
-        pars = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
-        chunks = []
-        for p in pars:
-            chunks.append({
-            "source":file["source"],
-            "page": page,
-            "paragraph": p
-            })
+def split_text(text):
+    return [text[i:i+MAX_CHARS] for i in range(0, len(text), MAX_CHARS)]
 
-        current.extend(chunks)
+def chunk():
+    extracted_corpus = extract()
+    paragraphs = []
+    for file in extracted_corpus:
+        current = []
+        for f in file["pages"]:
+            text = f["text"]
+            page = f["page"]
+            pars = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+            chunks = []
+            for p in pars:
+                if len(p) > MAX_CHARS:
+                    pieces = split_text(p)
+                else:
+                    pieces = [p]
 
-    paragraphs[file["source"]] = current
+                for piece in pieces:
+                    chunks.append({
+                        "source": file["source"],
+                        "page": page,
+                        "text": piece
+                    })
+
+            current.extend(chunks)
+        paragraphs.append(current)
+    return [item for sublist in paragraphs for item in sublist]
