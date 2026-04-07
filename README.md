@@ -87,6 +87,7 @@ Grounded Answer + Citations / Abstention
   "answer": "...",
   "citations": [...]
 }
+```
 
 Automated evaluation across:
 - answerable questions
