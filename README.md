@@ -1,210 +1,250 @@
-<div align="center">
+# Pharma Compliance RAG Assistant (V1)
 
-  <h1>Pharma RAG-Powered Compliance Co-pilot</h1>
-  
-  <p>
-    Compliance copilot for Pharma officers. 
-  </p>
-  
-   
-<h4>
-    <a href="https://github.com/fneffati/RAG">View Demo</a>
-  <span> · </span>
-    <a href="https://github.com/fneffati/RAG">Documentation</a>
-  <span> · </span>
-    <a href="https://github.com/fneffati/RAG/issues/">Report Bug</a>
-  <span> · </span>
-    <a href="https://github.com/fneffati/RAG/issues/">Request Feature</a>
-  </h4>
-</div>
+A retrieval-augmented generation (RAG) system that answers compliance and regulatory questions from pharmaceutical documents using grounded evidence and citations.
 
-<br />
+---
 
-<!-- Table of Contents -->
-# Table of Contents
+## Overview
 
-- [About the Project](#about-the-project)
-  * [Screenshots](#screenshots)
-  * [Tech Stack](#tech-stack)
-  * [Features](#features)
-  * [Environment Variables](#environment-variables)
-- [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-  * [Running Tests](#running-tests)
-  * [Run Locally](#run-locally)
-- [Usage](#usage)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-  
+This project implements a simple but complete RAG pipeline for the pharma/compliance domain.
 
-<!-- About the Project -->
-## About the Project
-A RAG assistant for answering pharma/compliance questions from SOPs and policy documents with citations.
+Given a user question, the system:
+1. retrieves relevant sections from regulatory documents  
+2. generates an answer using only retrieved context  
+3. cites sources (document + page)  
+4. abstains when the answer is not supported  
 
-<!-- Screenshots -->
-### Screenshots
+The focus of this project is **correctness, grounding, and explainability**, not complexity.
 
-<div align="center"> 
-  <img src="https://placehold.co/600x400?text=Your+Screenshot+here" alt="screenshot" />
-</div>
+---
 
+## Motivation
 
-<!-- TechStack -->
-### Tech Stack
+In regulated environments like pharmaceuticals, correctness and traceability are critical.
 
-<details>
-  <summary>Client</summary>
-  <ul>
-    <li><a href="https://www.typescriptlang.org/">Typescript</a></li>
-    <li><a href="https://nextjs.org/">Next.js</a></li>
-    <li><a href="https://reactjs.org/">React.js</a></li>
-    <li><a href="https://tailwindcss.com/">TailwindCSS</a></li>
-  </ul>
-</details>
+Traditional LLMs:
+- may hallucinate  
+- cannot cite specific internal policies  
+- are not grounded in authoritative documents  
 
-<details>
-  <summary>Server</summary>
-  <ul>
-    <li><a href="https://www.typescriptlang.org/">Typescript</a></li>
-    <li><a href="https://expressjs.com/">Express.js</a></li>
-    <li><a href="https://go.dev/">Golang</a></li>
-    <li><a href="https://nestjs.com/">Nest.js</a></li>
-    <li><a href="https://socket.io/">SocketIO</a></li>
-    <li><a href="https://www.prisma.io/">Prisma</a></li>    
-    <li><a href="https://www.apollographql.com/">Apollo</a></li>
-    <li><a href="https://graphql.org/">GraphQL</a></li>
-  </ul>
-</details>
+This system demonstrates how to:
+> **constrain LLMs to trusted sources and enforce evidence-based answers**
 
-<details>
-<summary>Database</summary>
-  <ul>
-    <li><a href="https://www.mysql.com/">MySQL</a></li>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-    <li><a href="https://redis.io/">Redis</a></li>
-    <li><a href="https://neo4j.com/">Neo4j</a></li>
-    <li><a href="https://www.mongodb.com/">MongoDB</a></li>
-  </ul>
-</details>
+---
 
-<details>
-<summary>DevOps</summary>
-  <ul>
-    <li><a href="https://www.docker.com/">Docker</a></li>
-    <li><a href="https://www.jenkins.io/">Jenkins</a></li>
-    <li><a href="https://circleci.com/">CircleCLI</a></li>
-  </ul>
-</details>
+## Architecture
 
-<!-- Features -->
-### Features
+PDF Documents
+    ↓
+Parsing + Chunking
+    ↓
+Local Embeddings (nomic-embed-text)
+    ↓
+Vector Similarity Search (cosine similarity)
+    ↓
+Top-K Relevant Chunks
+    ↓
+LLM (API) Answer Generation
+    ↓
+Grounded Answer + Citations / Abstention
 
-- Feature 1
-- Feature 2
-- Feature 3
+---
 
-<!-- Env Variables -->
-### Environment Variables
+## Tech Stack
 
-To run this project, you will need to add the following environment variables to your .env file
+- Python  
+- Local embeddings via Ollama (`nomic-embed-text`)  
+- OpenAI API (generation)  
+- NumPy (cosine similarity)  
+- Pandas (evaluation)  
 
-`API_KEY`
+---
 
-`ANOTHER_API_KEY`
+## Key Features
 
-<!-- Getting Started -->
-## Getting Started
+### 1. Grounded Answer Generation
+- Answers are generated **only from retrieved context**
+- No external knowledge allowed
 
-<!-- Prerequisites -->
-### Prerequisites
+### 2. Source Attribution
+- Every answer includes citations:
 
-This project uses Yarn as package manager
+### 3. Abstention Behavior
+- If the system cannot find sufficient evidence:
+"I don't know based on the provided documents."
 
-```bash
- npm install --global yarn
-```
+### 4. Local Embeddings
+- Embeddings are computed locally for:
+  - privacy awareness  
+  - realistic compliance use case  
 
-<!-- Installation -->
-### Installation
-
-Install my-project with npm
-
-```bash
-  yarn install my-project
-  cd my-project
-```
-   
-<!-- Running Tests -->
-### Running Tests
-
-To run tests, run the following command
-
-```bash
-  yarn test test
-```
-
-<!-- Run Locally -->
-### Run Locally
-
-Clone the project
-
-```bash
-  git clone https://github.com/Louis3797/awesome-readme-template.git
-```
-
-Go to the project directory
-
-```bash
-  cd my-project
-```
-
-Install dependencies
-
-```bash
-  yarn install
-```
-
-Start the server
-
-```bash
-  yarn start
-```
-
-
-<!-- Deployment -->
-### Deployment
-
-To deploy this project run
-
-```bash
-  yarn deploy
-```
-
-
-<!-- Usage -->
-## Usage
-
-Use this space to tell a little more about your project and how it can be used. Show additional screenshots, code samples, demos or link to other resources.
-
-
-```javascript
-import Component from 'my-project'
-
-function App() {
-  return <Component />
+### 5. Lightweight Evaluation Pipeline
+- Structured JSON outputs:
+```json
+{
+  "retrieved": true,
+  "answered": true,
+  "answer": "...",
+  "citations": [...]
 }
+
+Automated evaluation across:
+- answerable questions
+- weak/dataset-dependent questions
+- unanswerable questions
+
+## Evaluation (V1)
+
+### Dataset
+
+- ~8–12 public FDA / GMP / compliance documents  
+- ~15–20 evaluation questions  
+
+### Question Types
+
+| Type           | Description                                  |
+|----------------|----------------------------------------------|
+| Answerable     | Clearly supported by documents               |
+| Weak           | Depends on dataset coverage                  |
+| Unanswerable   | Requires internal/company knowledge          |
+
+### Results Summary
+
+- Strong performance on answerable regulatory questions  
+- Correct abstention on most unanswerable questions  
+- Mixed results on dataset-dependent (“weak”) questions  
+
+---
+
+## Key Findings (V1)
+
+### 1. Chunking Quality is Critical
+
+**Initial failures were caused by:**
+
+- Retrieving headings instead of full content  
+- Incomplete context  
+
+**Fix:**
+
+- Normalized chunk sizes (merge small, split large)  
+
+**Result:**
+
+- Significant improvement in answer quality  
+
+---
+
+### 2. Retrieval Threshold Helps but Is Not Sufficient
+
+**Similarity thresholding:**
+
+- Reduces noise  
+- Filters weak matches  
+
+**However:**
+
+- Thresholding alone does not prevent hallucinations  
+
+**Observed failure mode:**
+
+- Semantically similar but irrelevant chunks pass threshold  
+- LLM attempts to answer anyway  
+
+---
+
+### 3. Dataset Coverage Matters
+
+Some questions (e.g., CAPA) failed because:
+
+- Content was not present in the dataset  
+
+**Correct behavior:**
+
+- Abstain rather than hallucinate  
+
+---
+
+### 4. Two Types of Failure Identified
+
+**A. Retrieval Failure**
+
+- Correct answer exists  
+- Not retrieved properly  
+
+**B. Sufficiency Failure**
+
+- Retrieved chunks are related  
+- But do not fully answer the question  
+
+---
+
+### 5. Organization-Specific Questions Are High Risk
+
+**Examples:**
+
+- “Who approves SOP changes internally?”  
+- “What is the company’s internal deviation policy?”  
+
+**Result:**
+
+- Sometimes incorrectly answered despite retrieval filtering  
+
+**Insight:**
+
+> RAG systems need a notion of **answer sufficiency**, not just similarity  
+
+---
+
+## Limitations (V1)
+
+- No reranking of retrieved chunks  
+- No semantic relevance validation beyond similarity  
+- No structured evaluation of answer correctness (beyond answered/not answered)  
+- Chunking is heuristic (character-based)  
+- No UI (CLI-based interaction only)  
+
+---
+
+## Future Improvements
+
+- Add lightweight reranking (cross-encoder or scoring step)  
+- Improve chunking with sentence-aware splitting  
+- Add answer sufficiency scoring  
+- Expand dataset coverage  
+- Build simple UI (Streamlit)  
+
+---
+
+## Example
+
+**Question:** What are requirements for electronic signatures?
+
+**Answer:**
+> Electronic signatures may replace handwritten signatures if properly controlled and securely linked to records *(Source: Data Integrity and Compliance With Drug CGMP.pdf, Page 12)*
+>
+> Firms must ensure identity verification and document controls *(Page 13)*
+
+---
+
+## How to Run
+```bash
+python generation.py
 ```
 
-<!-- Roadmap -->
-## Roadmap
+For evaluation:
+```bash
+python evaluate.py
+```
 
-* [x] Todo 1
-* [ ] Todo 2
+---
 
+## Key Takeaway
 
-<!-- Contributing -->
-## Contributing
-Contributions are always welcome!
+> A simple, well-designed RAG system with strong grounding and evaluation can outperform more complex architectures that lack discipline.
 
-See `contributing.md` for ways to get started.
+---
+
+## Author's Note
+
+This is V1, built with a focus on simplicity, correctness, and fast iteration. The goal was not to build the most complex system, but to build a **complete, explainable, and improvable RAG pipeline**.

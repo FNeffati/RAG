@@ -83,33 +83,56 @@ def extract():
         - Output is flattened (no nesting by page).
         - No merging, overlap, or size control is applied.
 """
+def process_text(page):
+    text = page.strip()
+    text = re.sub(r"\n+", "\n", text)
+    pre_paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
 
-def split_text(text):
-    return [text[i:i+MAX_CHARS] for i in range(0, len(text), MAX_CHARS)]
+    result = []
+    current = ""
+
+    for paragraph in pre_paragraphs: 
+        pieces = []
+        if len(paragraph) > MAX_CHARS:
+            for i in range(0, len(paragraph), MAX_CHARS):
+                pieces.append(paragraph[i:i+MAX_CHARS])
+        else:
+            pieces = [paragraph]
+        
+    
+        for piece in pieces:
+            if not current:
+                current = piece
+            elif len(current) + 1 + len(piece) <= MAX_CHARS:
+                current += "\n" + piece
+            else:
+                result.append(current)
+                current = piece
+
+    if current:
+        result.append(current)
+    return result 
+
+
 
 def chunk():
     extracted_corpus = extract()
-    paragraphs = []
-    for file in extracted_corpus:
+    to_be_flat_paragraphs = []
+    for file in extracted_corpus:       # open up a file
         current = []
-        for f in file["pages"]:
-            text = f["text"]
-            page = f["page"]
-            pars = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+        for pages in file["pages"]:     
+            text = pages["text"]        
+            page_number = pages["page"]        # open up a page
+            paragraphs = process_text(text)
             chunks = []
-            for p in pars:
-                if len(p) > MAX_CHARS:
-                    pieces = split_text(p)
-                else:
-                    pieces = [p]
 
-                for piece in pieces:
-                    chunks.append({
-                        "source": file["source"],
-                        "page": page,
-                        "text": piece
-                    })
-
+            for piece in paragraphs:
+                chunks.append({
+                    "source": file["source"],
+                    "page": page_number,
+                    "text": piece
+                })
             current.extend(chunks)
-        paragraphs.append(current)
+        to_be_flat_paragraphs.append(current)
+
     return [item for sublist in paragraphs for item in sublist]

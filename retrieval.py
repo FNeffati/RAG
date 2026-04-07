@@ -19,7 +19,7 @@ def retrieve(user_question):
     comps = []
     for chunk in chunkz:
         cs = cosine_similarity(embedded_user_question, chunk["embedding"])
-        if cs > 0.70:
+        if cs > 0.6:
             comps.append((cs, chunk))
 
     if len(comps) < 1:
@@ -29,7 +29,7 @@ def retrieve(user_question):
     # print top 3 chunks with source and page
     sorted_similars = sorted(comps, key=lambda x: x[0], reverse=True)
     top_chunks = []
-    for score, chunk in sorted_similars[:3]:
+    for score, chunk in sorted_similars[:5]:
         # formatted = f"""Source: {chunk['source']} | "Page:"{chunk["page"]} Text: {chunk["text"]}"""
         # print(formatted)
         res = {

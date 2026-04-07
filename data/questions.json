@@ -17,7 +17,7 @@
   },
   {
     "question": "What is CAPA in pharma?",
-    "type": "answerable"
+    "type": "weak"
   },
   {
     "question": "What steps should be taken after detecting a data integrity issue?",
@@ -26,12 +26,12 @@
 
   {
     "question": "How do CAPA and deviation handling relate to each other?",
-    "type": "answerable"
+    "type": "weak"
   }
   ,
   {
     "question": "What is ALCOA and how is it used in data integrity?",
-    "type": "answerable"
+    "type": "weak"
   }
   ,
   {
@@ -54,7 +54,7 @@
   },
   {
     "question": "What is the relationship between validation and compliance?",
-    "type": "answerable"
+    "type": "weak"
   },
   {
     "question": "Who approves SOP changes internally?",

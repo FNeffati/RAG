@@ -5,56 +5,88 @@ from openai import OpenAI
 load_dotenv()
 client = OpenAI()
 
-SYSTEM_PROMPT = """
-You are a compliance document assistant.
 
-Answer the user's question using only the provided context.
-If the answer is not clearly supported by the context or the context is empty, say:
-"I don't know based on the provided documents."
+def generate(qst=None):
+    SYSTEM_PROMPT = """
+    You are a compliance document assistant.
 
-Be concise.
-Include citations in this format:
-(Source: document name, Page: page number)
-"""
+    Your job is to answer questions using ONLY the provided context.
+    Return your response as a JSON object with the following fields:
 
-user_question = input("Input your question: ")
-retrieved = retrieve(user_question)
-print(retrieved)
-print("###########################")
+    - "retrieved": boolean  
+    True if context was provided (non-empty), false otherwise.
 
-if not retrieved:
-    print("I don't know based on the provided documents.")
-else:
-    retrieved_context = "\n\n".join(
-        [
-            f"Source: {chunk['source']} | Page: {chunk['page']}\nText: {chunk['text']}"
-            for chunk in retrieved
-        ]
-    )
+    - "answered": boolean  
+    True if the question can be answered using the context, false if not.
 
-    user_prompt = f"""Question:
-{user_question}
+    - "answer": string  
+    A concise answer based ONLY on the context.  
+    If the question cannot be answered, set this to:
+    "I don't know based on the provided documents."
 
-Context:
-{retrieved_context}
-"""
+    - "citations": list of objects  
+    Each citation must include:
+        - "source": document name
+        - "page": page number
 
-    response = client.responses.create(
-        model="gpt-5",
-        input=[
-            {
-                "role": "system",
-                "content": [
-                    {"type": "input_text", "text": SYSTEM_PROMPT}
-                ],
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "input_text", "text": user_prompt}
-                ],
-            },
-        ],
-    )
+    Rules:
+    - Do NOT use any knowledge outside the provided context.
+    - If the context is empty or insufficient, set "answered" to false.
+    - Do NOT hallucinate.
+    - Keep answers concise.
 
-    print(response.output_text)
+    Output ONLY valid JSON. No extra text.
+
+    """
+
+    if qst != None:
+        user_question = qst
+    else:
+        user_question = input("Input your question: ")
+
+    retrieved = retrieve(user_question)
+    # print(retrieved)
+    # print("###########################")
+
+    if not retrieved:
+        return {
+            "retrieved": False,
+            "answered": False,
+            "answer": "I don't know based on the provided documents.",
+            "citations": []
+        }
+    else:
+        retrieved_context = "\n\n".join(
+            [
+                f"Source: {chunk['source']} | Page: {chunk['page']}\nText: {chunk['text']}"
+                for chunk in retrieved
+            ]
+        )
+
+        user_prompt = f"""Question:
+    {user_question}
+
+    Context:
+    {retrieved_context}
+    """
+
+        response = client.responses.create(
+            model="gpt-5",
+            input=[
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "input_text", "text": SYSTEM_PROMPT}
+                    ],
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": user_prompt}
+                    ],
+                },
+            ],
+        )
+
+        # print(response.output_text)
+        return response.output_text
